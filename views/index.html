@@ -1,1 +1,34 @@
-<h1>Hello World</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    
+</head>
+<body ng-app="To-do">
+    <h1>Hello World</h1>
+    <form method="post" action="/">
+        <input ng-model = "formdata.name" type="text" name="name"/>
+        <button ng-click="postName()">Submit</button>
+    </form>
+    <div ng-controller="poster">
+        <p ng-repeat="n in nameList">{{n.name}}</p>
+    </div>
+    <script type="text/javascript" src="scripts/angular.min.js"></script>
+    <script>
+        angular.module("To-do",[])
+        
+        .controller("poster",function($scope,$http){
+           $scope.postName = function(){
+               $http.post("/",$scope.formData)
+                   .success(function(data){
+                       console.log("posted");
+                   }).error(function(data){
+                       console.log("error");
+                   })
+           }
+           $http.get("/list").then(function(data){
+               $scope.nameList = data.data;
+           })
+        });
+    </script>
+</body>
+</html>
