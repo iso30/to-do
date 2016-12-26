@@ -10,7 +10,7 @@ var express = require('express');
 var pg = require('pg');
 var config = {
   user: process.env.PGUSER, //env var: PGUSER
-  database: process.env.DATABASE_URL, //env var: PGDATABASE
+  database: process.env.PGDATABASE, //env var: PGDATABASE
   password: process.env.PGPASSWORD, //env var: PGPASSWORD
   host: process.env.IP, // Server hosting the postgres database
   port: process.env.PGPORT, //env var: PGPORT
