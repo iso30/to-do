@@ -9,11 +9,11 @@ var express = require('express');
 //db config
 var pg = require('pg');
 var config = {
-  //user: process.env.PGUSER, //env var: PGUSER
-  database: process.env.DATABASE_URL, //env var: PGDATABASE
- /* password: process.env.PGPASSWORD, //env var: PGPASSWORD
+  user: process.env.PGUSER, //env var: PGUSER
+  database: process.env.PGDATABASE, //env var: PGDATABASE
+  password: process.env.PGPASSWORD, //env var: PGPASSWORD
   host: process.env.IP, // Server hosting the postgres database
-  port: process.env.PGPORT, //env var: PGPORT*/
+  port: process.env.PGPORT, //env var: PGPORT
   max: 10, // max number of clients in the pool
   idleTimeoutMillis: 30000, //
 };
