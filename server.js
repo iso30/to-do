@@ -10,8 +10,8 @@ var express = require('express');
 var pg = require('pg');
 var config = {
   user: process.env.PGUSER, //env var: PGUSER
-  database: 'test', //env var: PGDATABASE
-  password: 'pgpassword', //env var: PGPASSWORD
+  database: process.env.DATABASE_URL || 'test', //env var: PGDATABASE
+  password: process.env.PGPASSWORD||'pgpassword', //env var: PGPASSWORD
   host: process.env.IP, // Server hosting the postgres database
   port: process.env.PGPORT, //env var: PGPORT
   max: 10, // max number of clients in the pool
