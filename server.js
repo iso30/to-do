@@ -25,6 +25,7 @@ var router = express();
 var server = http.createServer(router);
 
 router.use(express.static(__dirname + '/views'));
+router.use(express.static(__dirname + '/db'))
 
 /** bodyParser.urlencoded(options)
  * Parses the text as URL encoded data (which is how browsers tend to send form data from regular forms set to POST)
