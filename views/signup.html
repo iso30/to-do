@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="css/index.css" type="text/css" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />    
+</head>
+<body ng-app="Signup">
+    <h1 class="col-md-3 col-md-offset-5" id="login-logo">Signup</h1>
+    <div ng-controller="POSTSignup">
+        <!-- Sign up form-->
+        <form method="post" class="col-md-4 col-md-offset-4" ng-submit="checkSignup()">
+            <!-- Nickname for user. Checks to see if empy-->
+            <div class="form-group">
+                <label for="nickname">Nickname:</label>
+                <p ng-init="invalidNickname = false" ng-if="invalidNickname" class="alert alert-danger form-error" ng-cloak>Nickname cannot be empty</p>
+                <input type="text" name="nickname" ng-model="formdata.nickname" class="form-control"/>
+            </div>
+            <!-- Email for user. Uses Validator to check for correct email-->
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <p ng-init="invalidEmail = false" ng-if="invalidEmail" class="alert alert-danger form-error" ng-cloak>Must be a valid Email</p>
+                <input type="text" name="email" ng-model="formdata.email" class="form-control"/>
+            </div>
+            <!-- Password for user. Checks for a minimum of 6 characters -->
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <p ng-init="invalidPassword = false" ng-if="invalidPassword" class="alert alert-danger form-error" ng-cloak>Password cannot be less than six characters</p>
+                <input type="password" name="password" ng-model="formdata.password" class="form-control"/>
+            </div>
+            <!-- Checks to see if the passwords match-->
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password:</label>
+                <p ng-init="unmatchedPassword = false" ng-if="unmatchedPassword" class="alert alert-danger form-error" ng-cloak>Passwords don't match</p>
+                <input type="password" name="confirmPassword" ng-model="formdata.confirmPassword" class="form-control"/>
+            </div>
+            <button class="btn btn-default col-md-offset-5">Login</button>
+        </form>        
+    </div>
+    
+    <script type="text/javascript" src="scripts/angular.min.js"></script>
+    <script type="text/javascript" src="scripts/validator.min.js"></script>
+    <script>
+        angular.module("Signup",[])
+        
+        .controller("POSTSignup",function($scope,$http){
+            $scope.checkSignup = function(){
+                //When the button is clicked reset all alerts to false
+                $scope.invalidEmail = false;
+                $scope.invalidPassword = false;
+                $scope.invalidNickname = false;
+                $scope.unmatchedPassword = false;
+                // If valid input post request. Does not check server side such as existing email
+                if(validator.isEmail($scope.formdata.email) && $scope.formdata.password.length >= 6
+                && $scope.formdata.confirmPassword === $scope.formdata.password && 
+                $scope.formdata.nickname.length > 0){
+                    console.log($scope.formdata.email + $scope.formdata.password + $scope.formdata.nickname);
+                }
+                //Else display alerts to user
+                else{
+                    if(!validator.isEmail($scope.formdata.email)){
+                        $scope.invalidEmail = true;
+                    }
+                    if($scope.formdata.password.length < 6){
+                        $scope.invalidPassword = true;
+                    }
+                    if(!($scope.formdata.confirmPassword === $scope.formdata.password)){
+                        $scope.unmatchedPassword = true;
+                    }
+                    if($scope.formdata.nickname == null){
+                        $scope.invalidNickname = true;
+                    }
+                }
+           }
+        });
+    </script>
+</body>
+</html>

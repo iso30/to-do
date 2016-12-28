@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="css/index.css" type="text/css" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
+</head>
+<body ng-app="Login">
+    <h1 class="col-md-3 col-md-offset-5" id="login-logo">Login</h1>
+    <!-- Form to login -->
+    <div ng-controller="POSTLogin">
+        <form name="loginForm" method="post" class="col-md-4 col-md-offset-4" ng-submit="checkLogin()">
+            <!-- Use validator to check if email is valid-->
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <p ng-init="invalidEmail = false" ng-if="invalidEmail" class="alert alert-danger form-error" ng-cloak>Must be a valid Email</p>
+                <input type="text" name="email" ng-model="formdata.email" class="form-control"/>
+            </div>
+            <!-- Check if password is atleast 6 characters -->
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <p ng-init="invalidPassword = false" ng-if="invalidPassword" class="alert alert-danger form-error" ng-cloak>Password cannot be less than six characters</p>
+                <input type="password" name="password" ng-model="formdata.password" class="form-control"/>
+            </div>
+            <button class="btn btn-default col-md-offset-5">Login</button>
+        </form>        
+    </div>
+<!-- temp code -->
+    <div ng-controller="poster">
+        <div ng-repeat="n in nameList">
+            <p ng-cloak>{{n.name}}</p>
+        </div>
+    </div>
+    <script type="text/javascript" src="scripts/angular.min.js"></script>
+    <script type="text/javascript" src="scripts/validator.min.js"></script>
+    <script>
+        angular.module("Login",[])
+        
+        .controller("POSTLogin",function($scope,$http){
+            $scope.checkLogin = function(){
+                //Reset alerts on each submit button
+                $scope.invalidEmail = false;
+                $scope.invalidPassword = false;
+                //If input is valid then post the credentials
+                if(validator.isEmail($scope.formdata.email) && $scope.formdata.password.length >= 6){
+                    console.log($scope.formdata.email + $scope.formdata.password);
+                }
+                //Else display alerts
+                else{
+                    if(!validator.isEmail($scope.formdata.email)){
+                        $scope.invalidEmail = true;
+                    }
+                    if($scope.formdata.password.length < 6){
+                        $scope.invalidPassword = true;
+                    }
+                }
+           }
+           //temp code
+           $http.get("/list").then(function(data){
+               $scope.nameList = data.data;
+           })
+        });
+    </script>
+</body>
+</html>

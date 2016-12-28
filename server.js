@@ -11,19 +11,22 @@ var pg = require('pg');
 var config = {
   user: process.env.PGUSER, //env var: PGUSER
   database: process.env.PGDATABASE, //env var: PGDATABASE
-  password: process.env.PGPASSWORD, //env var: PGPASSWORD
+  password: process.env.PGPASSWORD|| "pgpassword", //env var: PGPASSWORD
   host: process.env.PGIP, // Server hosting the postgres database
   port: process.env.PGPORT, //env var: PGPORT
   max: 10, // max number of clients in the pool
   idleTimeoutMillis: 30000, //
 };
+//Pool requests to db
 var pool = new pg.Pool(config);
+//Use this scheema
 var scheema = fs.readFileSync('./db/scheema.sql').toString();
 var bodyParser = require('body-parser');
 
 var router = express();
 var server = http.createServer(router);
 
+//Serving static files
 router.use(express.static(__dirname + '/views'));
 router.use(express.static(__dirname + '/db'))
 
@@ -40,8 +43,9 @@ router.use(bodyParser.urlencoded({
  */
 router.use(bodyParser.json());
 
+//Set homepage
 router.get("/",function(req,res){
-  res.sendfile("/views/index.html")
+  res.sendfile("./views/signup.html")
 });
 
 router.post("/",function(req,res){
@@ -79,6 +83,7 @@ router.get("/list", function(req,res){
 
 server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function(){
   console.log(("Connected"))
+  //On app start up run this scheema
   pool.connect(function(err,client,done){
     if(err){
       return console.error('error fetching client from pool',err);

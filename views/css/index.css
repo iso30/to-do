@@ -1,0 +1,12 @@
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+#login-logo{
+    padding-left: 5%;    
+}
+
+.form-error{
+  text-align: center;
+  padding:0px;
+}
