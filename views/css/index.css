@@ -6,6 +6,10 @@
     padding-left: 5%;    
 }
 
+#signupBtn{
+  margin-top: 3%;
+}
+
 .form-error{
   text-align: center;
   padding:0px;

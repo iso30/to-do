@@ -1,4 +1,6 @@
-CREATE TABLE IF NOT EXISTS tab (
+CREATE TABLE IF NOT EXISTS users (
   ID SERIAL PRIMARY KEY,
-  name VARCHAR
+  email VARCHAR,
+  passhash VARCHAR,
+  nickname VARCHAR
 );

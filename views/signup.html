@@ -4,9 +4,9 @@
     <link rel="stylesheet" href="css/index.css" type="text/css" />
     <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />    
 </head>
-<body ng-app="Signup">
+<body ng-app="Signup" class="container">
     <h1 class="col-md-3 col-md-offset-5" id="login-logo">Signup</h1>
-    <div ng-controller="POSTSignup">
+    <div ng-controller="POSTSignup" class ="row">
         <!-- Sign up form-->
         <form method="post" class="col-md-4 col-md-offset-4" ng-submit="checkSignup()">
             <!-- Nickname for user. Checks to see if empy-->
@@ -19,6 +19,7 @@
             <div class="form-group">
                 <label for="email">Email:</label>
                 <p ng-init="invalidEmail = false" ng-if="invalidEmail" class="alert alert-danger form-error" ng-cloak>Must be a valid Email</p>
+                <p ng-init="existEmail = false" ng-if="existEmail" class="alert alert-danger form-error" ng-cloak>Email already exists</p>
                 <input type="text" name="email" ng-model="formdata.email" class="form-control"/>
             </div>
             <!-- Password for user. Checks for a minimum of 6 characters -->
@@ -42,18 +43,24 @@
     <script>
         angular.module("Signup",[])
         
-        .controller("POSTSignup",function($scope,$http){
+        .controller("POSTSignup",function($scope,$http,$window){
             $scope.checkSignup = function(){
                 //When the button is clicked reset all alerts to false
                 $scope.invalidEmail = false;
                 $scope.invalidPassword = false;
                 $scope.invalidNickname = false;
                 $scope.unmatchedPassword = false;
+                $scope.existEmail = false;
                 // If valid input post request. Does not check server side such as existing email
                 if(validator.isEmail($scope.formdata.email) && $scope.formdata.password.length >= 6
                 && $scope.formdata.confirmPassword === $scope.formdata.password && 
                 $scope.formdata.nickname.length > 0){
-                    console.log($scope.formdata.email + $scope.formdata.password + $scope.formdata.nickname);
+                    $http.post("/signup",$scope.formdata).then(function(success){
+                        if(success.data.unique)
+                            $window.location.href = success.data.redirect;
+                        else
+                            $scope.existEmail = true;
+                    });
                 }
                 //Else display alerts to user
                 else{

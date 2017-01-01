@@ -7,6 +7,7 @@
   "author": "Mohammed Azad",
   "dependencies": {
     "async": "~0.2.8",
+    "bcrypt": "^1.0.1",
     "body-parser": "^1.15.2",
     "express": "~3.2.4",
     "fs": "0.0.1-security",
