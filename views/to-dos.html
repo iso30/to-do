@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html ng-app="to-do">
+<head>
+    <link rel="stylesheet" href="css/index.css" type="text/css" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
+</head>
+<body ng-controller="ShowToDos">
+    <p>Hello {{nickname}}</p>
+    <script type="text/javascript" src="scripts/angular.min.js"></script>
+    <script>
+        angular.module("to-do",[])
+        
+        .controller("ShowToDos",function($scope,$http){
+            $http.get("/getUserInfo").then(function(success){
+                $scope.nickname = success.data.nickname;            
+            });
+        });
+    </script>
+</body>
+</html>

@@ -13,6 +13,7 @@
             <div class="form-group">
                 <label for="email">Email:</label>
                 <p ng-init="invalidEmail = false" ng-if="invalidEmail" class="alert alert-danger form-error" ng-cloak>Must be a valid Email</p>
+                <p ng-init="inavlidCredentials = false" ng-if="inavlidCredentials" class="alert alert-danger form-error" ng-cloak>Invalid username or password</p>
                 <input type="text" name="email" ng-model="formdata.email" class="form-control"/>
             </div>
             <!-- Check if password is atleast 6 characters -->
@@ -38,14 +39,22 @@
     <script>
         angular.module("Login",[])
         
-        .controller("POSTLogin",function($scope,$http){
+        .controller("POSTLogin",function($scope,$http,$window){
             $scope.checkLogin = function(){
                 //Reset alerts on each submit button
                 $scope.invalidEmail = false;
                 $scope.invalidPassword = false;
+                $scope.inavlidCredentials = false;
                 //If input is valid then post the credentials
                 if(validator.isEmail($scope.formdata.email) && $scope.formdata.password.length >= 6){
-                    console.log($scope.formdata.email + $scope.formdata.password);
+                    $http.post("/login",$scope.formdata).then(function(success){
+                        if(success.data.authorized){
+                            $window.location.href = success.data.redirect;
+                        }
+                        else{
+                            $scope.inavlidCredentials = true;
+                        }
+                    });
                 }
                 //Else display alerts
                 else{
