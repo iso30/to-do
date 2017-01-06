@@ -12,6 +12,7 @@ var query = require('./db/query.js');
 //Use this scheema
 var scheema = fs.readFileSync('./db/scheema.sql').toString();
 var users = require("./db/users.js");
+var todos = require("./db/todos.js");
 
 var bcrypt = require("bcrypt");
 var bodyParser = require('body-parser');
@@ -41,13 +42,16 @@ router.use(session({secret:"shhhhhhh",resave:false,saveUninitialized:false}));
 //Set homepage
 router.get("/",function(req,res){
   if(req.session.email)
-    return res.redirect("/to-dos")
+    return res.redirect("/to-dos");
   else
     res.sendfile("./views/login.html");
 });
 
 router.get("/signup", function(req, res) {
-   res.sendfile("./views/signup.html"); 
+  if(req.session.email)
+    return res.redirect("/to-dos");
+  else
+    res.sendfile("./views/signup.html"); 
 });
 
 router.post("/signup",function(req,res){
@@ -59,7 +63,7 @@ router.post("/signup",function(req,res){
         if(err){
           return console.error("error hashing password", err);
         }
-        users.create([req.body.email,hash,req.body.nickname],function(result){
+        users.create([req.body.email,hash,req.body.nickname,"website"],function(result){
            res.send({unique:true,redirect:"/"});
         });
       });
@@ -78,6 +82,7 @@ router.post("/login",function(req, res) {
           return console.error("Error checking password",err);
         }
         if(bres){
+          req.session.user_id = rows[0].id;
           req.session.email = req.body.email;
           req.session.nickname = rows[0].nickname;
           res.send({authorized:true,redirect:"/to-dos"})
@@ -94,13 +99,20 @@ router.get("/to-dos", function(req,res){
   res.sendfile("./views/to-dos.html");
 });
 
+router.post("/to-dos",function(req, res) {
+    todos.create([req.session.user_id,req.body.title,req.body.description,false],function(result){
+      res.send({sucess:true})
+    })
+});
 router.get("/getUserInfo",function(req, res) {
   if(!req.session.email){
     res.statusCode = 404;
     res.end()
   }
   else{
-    return res.json({nickname:req.session.nickname});
+    todos.getByID(req.session.user_id,function(rows){
+      return res.json({nickname:req.session.nickname,todos:rows});
+    });
   }
 });
 server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function(){

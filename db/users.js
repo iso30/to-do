@@ -7,7 +7,7 @@ var email = function(email,callback){
 }
 
 var create = function(values,callback){
-    query.PUTquery("users",["email","passhash","nickname"],values,function(result){
+    query.PUTquery("users",["email","passhash","nickname", "logintype"],values,function(result){
         callback(result);
     });
 }

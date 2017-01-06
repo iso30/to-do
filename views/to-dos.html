@@ -6,14 +6,46 @@
 </head>
 <body ng-controller="ShowToDos">
     <p>Hello {{nickname}}</p>
+    <div class="container-fluid">
+        <!-- split the page up into two collumns-->
+      <div class="row-fluid">
+        <div class="col-md-6 col-md-offset-1">
+          <p>ok<p/>
+          <p>ll</p>
+        </div>
+        <div class="col-md-4">
+            <p class="text-center" id="task-form-title">Create a Task</p>
+            <form name="taskform" method="post" class="col-md-12" ng-submit="POSTtodo()">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <p ng-init="invalidTitle = false" ng-if="invalidTitle" class="alert alert-danger form-error" ng-cloak>Title cannot be empty</p>
+                    <input type="text" name="title" ng-model="formdata.title" class="form-control"/>
+                </div>
+                <div class="form-group">
+                    <label for="description">Enter a brief description</label>
+                    <p ng-init="invalidDesc = false" ng-if="invalidDesc" class="alert alert-danger form-error" ng-cloak>Invalid description</p>
+                    <textarea rows="3" name="description" ng-model="formdata.description" class="form-control"></textarea>
+                </div>
+                <button class="btn btn-default col-md-12">Create Task</button>
+            </form>
+        </div>
+      </div>
+    </div>
     <script type="text/javascript" src="scripts/angular.min.js"></script>
     <script>
         angular.module("to-do",[])
         
         .controller("ShowToDos",function($scope,$http){
             $http.get("/getUserInfo").then(function(success){
-                $scope.nickname = success.data.nickname;            
+                $scope.nickname = success.data.nickname;
+                $scope.todos = success.data.todos;
             });
+            $scope.POSTtodo = function(){
+                $http.post("/to-dos",$scope.formdata).then(function(success){
+                    $scope.formdata.title = null;
+                    $scope.formdata.description = null;
+                });
+            }
         });
     </script>
 </body>
