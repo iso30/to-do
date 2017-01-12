@@ -11,6 +11,6 @@ CREATE TABLE IF NOT EXISTS todos(
   user_ID INTEGER REFERENCES users(ID),
   title VARCHAR,
   description VARCHAR,
-  isDone BOOLEAN,
+  isdone BOOLEAN,
   created_on TIMESTAMP DEFAULT(NOW())
 );

@@ -1,7 +1,7 @@
 var query = require('./query.js');
 
-var getByID = function(id,callback){
-    query.GETquery("*","todos",["user_id",id],function(rows){
+var getUndoneByID = function(id,callback){
+    query.GETquery("*","todos",["user_id","isdone"],[id,false],function(rows){
         callback(rows);
     });
 }
@@ -12,5 +12,19 @@ var create = function(values,callback){
     });
 }
 
+var setDone = function(id,callback){
+    
+    query.UPDATEquery("todos",["isdone"],[true],["id"],[id], function(result){
+        callback(result);
+    });
+}
+
+var deleteByID = function(id,callback){
+    query.DELETEquery("todos",["id"],[id],function(result){
+        callback(result);
+    });
+}
 exports.create = create;
-exports.getByID = getByID;
+exports.getUndoneByID = getUndoneByID;
+exports.setDone = setDone;
+exports.deleteByID = deleteByID;

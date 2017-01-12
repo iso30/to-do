@@ -10,9 +10,21 @@
         <!-- split the page up into two collumns-->
       <div class="row-fluid">
         <div class="col-md-6 col-md-offset-1">
-          <p>ok<p/>
-          <p>ll</p>
+            <ul id="toDoList" ng-cloak>
+                <li class="todoItem" ng-repeat="todo in todos">
+                    <div class="checkbox" ng-init="todo.display = false">
+                        <input type="checkbox" class="todoCheckbox" ng-click="hitCheckbox(todo)" ng-disabled="todo.isdone"/>
+                    </div>
+                    {{todo.title}}
+                    <a ng-click="showDesc(todo)" href=""><img id="downicon" src="images/downarrow.png"></a>
+                    <a ng-click="DELETEtodo(todo)" href=""><img id="xicon" src="images/xicon.png"></a>
+                    <div ng-if="todo.display" class="todoDesc">
+                        {{todo.description}}
+                    </div>
+                </li>
+            </ul>
         </div>
+        <!-- ToDo Form column -->
         <div class="col-md-4">
             <p class="text-center" id="task-form-title">Create a Task</p>
             <form name="taskform" method="post" class="col-md-12" ng-submit="POSTtodo()">
@@ -26,25 +38,51 @@
                     <p ng-init="invalidDesc = false" ng-if="invalidDesc" class="alert alert-danger form-error" ng-cloak>Invalid description</p>
                     <textarea rows="3" name="description" ng-model="formdata.description" class="form-control"></textarea>
                 </div>
-                <button class="btn btn-default col-md-12">Create Task</button>
+                <button class="btn btn-success col-md-12">Create Task</button>
             </form>
         </div>
+        <!-- End Todo form column-->
       </div>
     </div>
     <script type="text/javascript" src="scripts/angular.min.js"></script>
     <script>
         angular.module("to-do",[])
-        
+    
         .controller("ShowToDos",function($scope,$http){
-            $http.get("/getUserInfo").then(function(success){
-                $scope.nickname = success.data.nickname;
-                $scope.todos = success.data.todos;
-            });
+            var loadTodos = function(){
+                $http.get("/getUserInfo").then(function(success){
+                    $scope.nickname = success.data.nickname;
+                    $scope.todos = success.data.todos;
+                });
+            }
+            loadTodos();
             $scope.POSTtodo = function(){
                 $http.post("/to-dos",$scope.formdata).then(function(success){
                     $scope.formdata.title = null;
                     $scope.formdata.description = null;
+                    loadTodos();
                 });
+            }
+            
+            $scope.hitCheckbox = function(todo){
+                todo.isdone = true;
+                $http.patch("/finishTask",{id:todo.id}).then(function(success){
+                });
+            }
+            $scope.DELETEtodo = function(todo){
+                $http({
+                    method: 'DELETE',
+                    url: '/to-dos',
+                    data: {id:todo.id},
+                    headers: {'Content-Type': 'application/json;charset=utf-8'}
+                })
+                loadTodos();
+            }
+            $scope.showDesc = function(todo){
+                if(todo.display)
+                    todo.display = false
+                else
+                    todo.display = true;
             }
         });
     </script>

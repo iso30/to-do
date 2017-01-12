@@ -26,16 +26,16 @@ var customQuery = function(query,callback){
     });
   });
 }
-var GETquery = function(selectParam,tableParam,whereParam,callback){
-    if(whereParam)
-        var querystr = 'SELECT '+selectParam+' FROM '+tableParam+' WHERE '+whereParam[0]+"=$1";
+var GETquery = function(selectParam,tableParam,whereFields,whereValues, callback){
+    if(whereFields)
+        var querystr = 'SELECT '+selectParam+' FROM '+tableParam+ constructWhereStr(whereFields);
     else
         var querystr = 'SELECT '+selectParam+' FROM '+tableParam
     pool.connect(function(err, client, done) {
         if(err){
           return console.error('error fetching client from pool',err);
         }
-        client.query(querystr,[whereParam[1]], function(err,result){
+        client.query(querystr,whereValues, function(err,result){
           done();
           if(err){
             return console.error('error running query',err);
@@ -45,6 +45,29 @@ var GETquery = function(selectParam,tableParam,whereParam,callback){
     });
 }
 
+var UPDATEquery = function(tableParam,fields,values,whereFields,whereValues,callback){
+  var querystr = constructUpdatestr(tableParam,fields,values) + constructWhereStr(whereFields);
+  pool.connect(function(err, client, done) {
+      if(err){
+        return console.error('errer fetching client from pool', err);
+      }
+      client.query(querystr,whereValues,function(err,result){
+        done();
+        if(err){
+          return console.error('error running query',err);
+        }
+        callback(result);
+      });
+    });
+}
+var constructUpdatestr = function(tableParam,fields,values){
+   var querystr = 'UPDATE ' + tableParam + ' SET '
+   for(var field in fields)
+    querystr += fields[field] + "="+values[field] +",";
+  querystr = querystr.slice(0,-1);
+  return querystr;
+  
+}
 var PUTquery = function(tableParam,fields,values,callback){
   var querystr = constructPutStr(tableParam,fields,values);
   pool.connect(function(err, client, done) {
@@ -61,6 +84,29 @@ var PUTquery = function(tableParam,fields,values,callback){
   });
 }
 
+var DELETEquery = function(tableParam,whereFields,whereValues,callback){
+  var querystr = "DELETE FROM " + tableParam + " " + constructWhereStr(whereFields);
+  pool.connect(function(err, client, done) {
+      if(err){
+        return console.error('error fetching clent from pool', err);
+      }
+      client.query(querystr,whereValues,function(err,result){
+        done();
+        if(err){
+          return console.error('error running query',err);
+        }
+        callback(result)
+      });
+  });
+}
+var constructWhereStr = function(whereFields){
+  var querystr = " WHERE ";
+  for(var i = 0; i < whereFields.length; i++){
+    querystr += whereFields[i] + " = $" + (i+1).toString()+" AND "; 
+  }
+  querystr = querystr.slice(0,-4);
+  return querystr;
+}
 var constructPutStr = function(tableParam,fields,values){
   var querystr = 'INSERT INTO '+tableParam +'(';
   for(var field in fields){
@@ -79,3 +125,5 @@ var constructPutStr = function(tableParam,fields,values){
 exports.GETquery = GETquery;
 exports.PUTquery = PUTquery;
 exports.customQuery = customQuery;
+exports.UPDATEquery = UPDATEquery;
+exports.DELETEquery = DELETEquery;

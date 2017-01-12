@@ -96,7 +96,10 @@ router.post("/login",function(req, res) {
 });
 
 router.get("/to-dos", function(req,res){
-  res.sendfile("./views/to-dos.html");
+  if(!req.session.email)
+    return res.redirect("/")
+  else
+    res.sendfile("./views/to-dos.html");
 });
 
 router.post("/to-dos",function(req, res) {
@@ -110,10 +113,22 @@ router.get("/getUserInfo",function(req, res) {
     res.end()
   }
   else{
-    todos.getByID(req.session.user_id,function(rows){
+    todos.getUndoneByID(req.session.user_id,function(rows){
       return res.json({nickname:req.session.nickname,todos:rows});
     });
   }
+});
+
+router.patch("/finishTask",function(req,res){
+  todos.setDone(req.body.id,function(result){
+    res.send({sucess:true});
+  });
+});
+
+router.delete("/to-dos",function(req,res){
+  todos.deleteByID(req.body.id,function(result){
+    res.send({sucess:true});
+  })
 });
 server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function(){
   console.log(("Connected"));

@@ -1,7 +1,7 @@
 var query = require('./query.js');
 
 var email = function(email,callback){
-    query.GETquery("*","users",["email",email],function(rows){
+    query.GETquery("*","users",["email"],[email],function(rows){
         callback(rows);
     });
 }

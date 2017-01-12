@@ -10,7 +10,30 @@
   margin-top: 3%;
 }
 
+#toDoList{
+  list-style-type: none;
+}
+#xicon{
+  width: 25px;
+  height: 25px;
+}
+#downicon{
+  width: 25px;
+  height: 25px;
+}
+
 .form-error{
   text-align: center;
   padding:0px;
+}
+.todoCheckbox{
+  display: inline;
+}
+
+.todoItem{
+  display: inline;
+}
+
+.todoDesc{
+  margin-left: 5%;
 }
